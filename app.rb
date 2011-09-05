@@ -14,5 +14,5 @@ end
 
 get '/:hash' do
   result = MONGO.find_one(:hash => params[:hash])
-  result ? result['_id'].to_s : 404
+  result ? result['_id'].to_i.to_s : 404
 end
