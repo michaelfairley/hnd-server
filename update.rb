@@ -7,6 +7,7 @@ module Update
   def self.update!(mongo)
     puts "Updating"
     get_newest.each do |id, url|
+      url = Addressable::URI.parse(url).normalize.to_s
       hash = Digest::MD5.hexdigest(url)
       id = id.to_i
       mongo.update({:_id => id}, {:$set => {:hash => hash}}, :upsert => true)
