@@ -23,21 +23,21 @@ get '/' do
   redirect 'http://mfairley.com/hnd', 301
 end
 
-get '/:hash' do
+get '/:hash.json' do
   result = MONGO.find(:hash => params[:hash]).to_a
-  result.empty? ? 404 : result.map{|i| i['_id'].to_i.to_s}.join(',')
-end
-
-get '/json/:hash' do
-  result = MONGO.find(:hash => params[:hash]).to_a
-  result.empty? ? 404 : result.map{|i| i['_id'].to_i.to_s}.to_a
+  return 404  if result.empty?
 
   # JSONP code adapted from https://gist.github.com/446278
   callback = params['callback']
-  json = { :result => result }.to_json
+  json = "[#{result.map{|i| i['_id'].to_i.to_s}.join(',')}]"
 
   content_type(callback ? :js : :json)
   response = callback ? "#{callback}(#{json})" : json
 
   response
+end
+
+get '/:hash' do
+  result = MONGO.find(:hash => params[:hash]).to_a
+  result.empty? ? 404 : result.map{|i| i['_id'].to_i.to_s}.join(',')
 end
