@@ -29,7 +29,7 @@ get '/:hash.json' do
 
   # JSONP code adapted from https://gist.github.com/446278
   callback = params['callback']
-  json = "[#{result.map{|i| i['_id'].to_i.to_s}.join(',')}]"
+  json = "[#{result.map{|i| %Q{"#{i['_id']}"}}.join(',')}]"
 
   content_type(callback ? :js : :json)
   response = callback ? "#{callback}(#{json})" : json
